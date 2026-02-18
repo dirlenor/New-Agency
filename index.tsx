@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { ArrowRight, ArrowUpRight, Menu, X, Check, Palette, Code, Layout, Play, GitBranch, Sparkles } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
+import { BGPattern } from '@/components/ui/bg-pattern';
 
 declare global {
   interface Window {
@@ -11,7 +12,6 @@ declare global {
   }
 }
 
-const heroBgImage = new URL('./assets/bg-hero.jpg', import.meta.url).href;
 const uxUiShowcaseImage = new URL('./assets/Fintech Platform Website Design Concept!.jpeg', import.meta.url).href;
 const webDevShowcaseImage = new URL('./assets/code aesthetic.jpeg', import.meta.url).href;
 const redesignShowcaseImage = new URL('./assets/Website Design 🌐 Cryptocurrency Landing Page - Website Design in 2024 _ Website.jpeg', import.meta.url).href;
@@ -53,14 +53,14 @@ const SectionHeading = ({ children, number }: { children?: React.ReactNode, numb
   return (
     <div className="flex flex-col mb-8 md:mb-12 lg:mb-16 opacity-0 reveal-on-scroll">
       <span className="text-[#FF4D00] font-mono text-xs md:text-sm tracking-widest mb-2 md:mb-4 opacity-80">{number}</span>
-      <h2 className="text-2xl md:text-4xl lg:text-6xl font-light tracking-tight leading-tight">{children}</h2>
+      <h2 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight">{children}</h2>
     </div>
   );
 };
 
 // --- Main Components ---
 
-const Navbar = () => {
+const Navbar = ({ isHome }: { isHome: boolean }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -90,13 +90,13 @@ const Navbar = () => {
         className={`
           flex items-center justify-between px-4 md:px-6 py-3 md:py-4 rounded-xl md:rounded-2xl border mx-auto
           transition-[width,background-color,box-shadow,backdrop-filter] duration-700 ease-out
-          ${isScrolled 
+          ${isScrolled
             ? 'bg-black/80 backdrop-blur-lg border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35)]'
             : 'bg-transparent border-transparent'}
         `}
         style={{ width: isScrolled ? 'min(1100px, 92vw)' : '100%', maxWidth: '100%' }}
       >
-        <Link to="/" className="text-xl font-bold tracking-widest z-50">
+        <Link to="/" className="text-xl font-bold tracking-widest z-50 text-white">
           6CAT<span className="text-[#FF4D00]">.</span>
         </Link>
 
@@ -119,14 +119,17 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:block">
-           <Link to="/contact" className="text-sm font-semibold text-white border border-white/40 px-6 py-3 rounded-full hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300">
+           <Link
+             to="/contact"
+             className="text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 text-white border border-white/40 hover:border-[#FF4D00] hover:text-[#FF4D00]"
+           >
              Contact Us
            </Link>
         </div>
 
         {/* Mobile Toggle */}
         <button 
-          className="md:hidden text-white z-50"
+          className="md:hidden z-50 text-white"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X /> : <Menu />}
@@ -135,7 +138,7 @@ const Navbar = () => {
 
       {/* Mobile Nav Overlay - Outside navbar container for proper fixed positioning */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 bg-[#050505] z-40 flex flex-col items-center justify-center space-y-6 px-6">
+        <div className="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center space-y-6 px-6 bg-[#050505] text-white">
           {navLinks.map((link) => (
             <Link 
               key={link.to} 
@@ -153,12 +156,9 @@ const Navbar = () => {
 };
 
 const Hero = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const heroBgRef = useRef<HTMLImageElement>(null);
   const heroWordTimelineRef = useRef<any>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
   const codeLines = useMemo(
     () => [
       '<!doctype html>',
@@ -173,197 +173,6 @@ const Hero = () => {
   const [codeLineIndex, setCodeLineIndex] = useState(0);
   const [codeCharIndex, setCodeCharIndex] = useState(0);
   const [typedLines, setTypedLines] = useState<string[]>(['']);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    
-    // Config
-    let frame = 0;
-    const particles: any[] = [];
-    const particleCount = 40; // Reduced for minimal clean look
-    const stars: { x: number; y: number; r: number; alpha: number; twinkle: number }[] = [];
-    
-    const createStars = () => {
-      stars.length = 0;
-      const count = Math.min(220, Math.max(120, Math.round((width * height) / 12000)));
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          r: Math.random() * 1.2 + 0.2,
-          alpha: Math.random() * 0.6 + 0.2,
-          twinkle: Math.random() * Math.PI * 2,
-        });
-      }
-    };
-
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      createStars();
-    };
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedY: number;
-      speedX: number;
-      alpha: number;
-      life: number;
-
-      constructor() {
-        this.x = width / 2 + (Math.random() - 0.5) * 4; // Start near center laser
-        this.y = -Math.random() * height; // Start above view
-        this.size = Math.random() * 2 + 0.6;
-        this.speedY = Math.random() * 1.6 + 1.2;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.alpha = Math.random() * 0.5 + 0.4;
-        this.life = height / this.speedY + Math.random() * 120;
-      }
-
-      update() {
-        this.y += this.speedY;
-        this.x += this.speedX;
-        this.life--;
-
-        // Reset if off screen or dead
-        if (this.y > height + 20 || this.life < 0) {
-          this.y = -Math.random() * height * 0.4 - 20;
-          this.x = width / 2 + (Math.random() - 0.5) * 10;
-          this.speedY = Math.random() * 1.6 + 1.2;
-          this.life = height / this.speedY + Math.random() * 120;
-        }
-      }
-
-      draw() {
-        ctx!.fillStyle = `rgba(255, 77, 0, ${this.alpha})`;
-        ctx!.shadowBlur = 26;
-        ctx!.shadowColor = '#FF4D00';
-        ctx!.beginPath();
-        ctx!.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx!.fill();
-        ctx!.shadowBlur = 0;
-      }
-    }
-
-    // Init Particles
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
-    }
-
-    const drawGalaxyBackground = (f: number) => {
-      const gradient = ctx!.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, '#080503');
-      gradient.addColorStop(0.45, '#0b0604');
-      gradient.addColorStop(1, '#020202');
-      ctx!.fillStyle = gradient;
-      ctx!.fillRect(0, 0, width, height);
-
-      ctx!.save();
-      ctx!.globalCompositeOperation = 'screen';
-      const nebula = ctx!.createRadialGradient(
-        width * 0.5,
-        height * 0.25,
-        0,
-        width * 0.5,
-        height * 0.25,
-        Math.max(width, height) * 0.85
-      );
-      nebula.addColorStop(0, 'rgba(255, 120, 60, 0.16)');
-      nebula.addColorStop(0.45, 'rgba(180, 70, 25, 0.12)');
-      nebula.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx!.fillStyle = nebula;
-      ctx!.fillRect(0, 0, width, height);
-      ctx!.restore();
-
-      stars.forEach((s) => {
-        const flicker = s.alpha + Math.sin(f * 0.02 + s.twinkle) * 0.12;
-        ctx!.fillStyle = `rgba(255, 255, 255, ${Math.max(0, Math.min(1, flicker))})`;
-        ctx!.beginPath();
-        ctx!.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx!.fill();
-      });
-    };
-
-      const drawLaser = () => {
-      // Main beam
-      const centerX = width / 2;
-      const flicker = Math.random() * 0.2 + 0.8;
-      const widthFlicker = Math.random() * 2 + 1;
-
-      // Core white-ish beam
-      ctx!.beginPath();
-      ctx!.moveTo(centerX, 0);
-      ctx!.lineTo(centerX, height);
-        ctx!.strokeStyle = `rgba(255, 255, 255, ${0.22 * flicker})`;
-        ctx!.lineWidth = 2;
-        ctx!.stroke();
-
-      // Orange Glow beam
-      ctx!.beginPath();
-      ctx!.moveTo(centerX, 0);
-      ctx!.lineTo(centerX, height);
-        ctx!.strokeStyle = `rgba(255, 77, 0, ${0.14 * flicker})`;
-        ctx!.lineWidth = widthFlicker + 16;
-        ctx!.shadowBlur = 70;
-        ctx!.shadowColor = '#FF4D00';
-        ctx!.stroke();
-        ctx!.shadowBlur = 0;
-      };
-
-
-
-
-    const animate = () => {
-      drawGalaxyBackground(frame);
-      drawLaser();
-
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
-
-      frame++;
-      requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!window.gsap || !heroBgRef.current) return;
-    const tween = window.gsap.fromTo(
-      heroBgRef.current,
-      { scale: 1.05 },
-      {
-        scale: 1.15,
-        duration: 22,
-        ease: 'sine.inOut',
-        yoyo: true,
-        repeat: -1,
-        transformOrigin: 'center',
-      }
-    );
-
-    return () => {
-      tween.kill();
-    };
-  }, []);
 
   useEffect(() => {
     const heroEl = heroRef.current;
@@ -501,24 +310,23 @@ const Hero = () => {
 
 
   return (
-    <section ref={heroRef} id="home" className={`hero-section relative w-full h-screen overflow-hidden flex items-center justify-center transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-      <div className="absolute inset-0 z-0">
-        <img 
-          ref={heroBgRef} 
-          src={heroBgImage} 
-          alt="Hero background" 
-          className={`w-full h-full object-contain transition-opacity duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-          onLoad={() => setImageLoaded(true)}
-        />
-        <div className="absolute inset-0 bg-black/40"></div>
-      </div>
-      <canvas ref={canvasRef} className="absolute inset-0 z-0 opacity-90" />
+    <section ref={heroRef} id="home" className={`hero-section relative w-full h-screen overflow-hidden flex items-center justify-center transition-opacity duration-500 bg-[#050505] ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+      <BGPattern
+        variant="dots"
+        mask="fade-center"
+        size={16}
+        fill="rgba(148,163,184,0.34)"
+        className="pointer-events-none z-0"
+      />
+      <div className="absolute inset-x-0 top-0 h-56 bg-gradient-to-b from-[#050505] to-transparent pointer-events-none z-0"></div>
+      <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-b from-transparent to-[#050505] pointer-events-none z-0"></div>
+
       <div className="absolute inset-x-0 bottom-0 z-[1] pointer-events-none flex justify-center px-4 md:px-0">
-        <div className="hero-code-panel relative h-[18vh] md:h-[24vh] lg:h-[28vh] overflow-hidden rounded-t-2xl md:rounded-t-3xl bg-black/85 border border-white/10 shadow-[0_0_40px_rgba(255,77,0,0.25)] md:shadow-[0_0_60px_rgba(255,77,0,0.35)] w-full md:w-[70vw] lg:w-[60vw]">
+        <div className="hero-code-panel relative h-[18vh] md:h-[24vh] lg:h-[28vh] overflow-hidden rounded-t-2xl md:rounded-t-3xl bg-[#0b0b0d] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.24)] md:shadow-[0_0_45px_rgba(0,0,0,0.3)] w-full md:w-[70vw] lg:w-[60vw]">
           <div className="absolute top-0 left-0 right-0 h-8 md:h-10 border-b border-white/10 flex items-center px-3 md:px-4 gap-1.5 md:gap-2">
-            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/20"></span>
-            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/20"></span>
-            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/20"></span>
+            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/30"></span>
+            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/30"></span>
+            <span className="h-1.5 w-1.5 md:h-2 md:w-2 rounded-full bg-white/30"></span>
           </div>
           <div className="absolute top-10 md:top-12 left-0 right-0 bottom-0 px-3 md:px-5 pb-4 md:pb-6 font-mono text-[9px] md:text-[11px] lg:text-xs text-white/85">
             {typedLines.map((line, index) => (
@@ -532,13 +340,23 @@ const Hero = () => {
           </div>
         </div>
       </div>
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-black z-[2] pointer-events-none"></div>
-
       {/* Main Content */}
-      <div className="relative z-10 text-center px-4 md:px-6 max-w-[1330px] -mt-20 md:-mt-28 lg:-mt-36">
+      <div className="relative z-10 text-center px-4 md:px-6 max-w-[1330px] -mt-20 md:-mt-28 lg:-mt-36 pointer-events-none">
         <div className="overflow-visible pb-1">
-              <div className="hero-line text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.4em] text-white/60 mb-4 md:mb-6 text-center">
-                6CAT AGENCY 2026
+              <div className="hero-line mb-4 md:mb-6 text-center flex justify-center">
+                <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-black/35 backdrop-blur-sm px-4 py-2 shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+                  <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] md:tracking-[0.36em] text-white/70">
+                    6CAT AGENCY 2026
+                  </span>
+                  <span className="h-3.5 w-px bg-white/15"></span>
+                  <span className="inline-flex items-center gap-1.5 text-[10px] md:text-xs uppercase tracking-[0.16em] text-white/80">
+                    <span className="relative inline-flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-70 animate-ping"></span>
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#22c55e]"></span>
+                    </span>
+                    Online
+                  </span>
+                </div>
               </div>
           <h2 className="hero-line text-[clamp(1.9rem,7.2vw,4.25rem)] 2xl:text-[clamp(1.8rem,5.5vw,5.5rem)] font-semibold text-white tracking-tight leading-[1.15] md:leading-[1.2] mb-6 md:mb-10">
                 <span className="home-hero-word">We</span>{' '}
@@ -554,13 +372,13 @@ const Hero = () => {
         </div>
         
         <div className="hero-line mt-8 md:mt-12 flex justify-center">
-             <div className="relative group">
+             <div className="relative group pointer-events-auto">
                 <div className="absolute -inset-1 bg-gradient-to-r from-[#FF4D00] to-orange-600 rounded-full blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-                 <button data-cursor-expand className="relative px-6 md:px-8 py-3 md:py-4 bg-black rounded-full leading-none flex items-center divide-x divide-neutral-800 text-sm md:text-base">
+                  <button data-cursor-expand className="relative px-6 md:px-8 py-3 md:py-4 bg-[#FF4D00] border border-[#FF4D00] rounded-full leading-none flex items-center divide-x divide-white/30 text-sm md:text-base shadow-[0_20px_45px_rgba(255,77,0,0.28)] transition-colors duration-300 hover:bg-[#e54400]">
                     <span className="flex items-center space-x-3 md:space-x-5">
-                    <span className="pr-4 md:pr-6 text-gray-100">See our work</span>
+                    <span className="pr-4 md:pr-6 text-white">See our work</span>
                     </span>
-                    <span className="pl-4 md:pl-6 text-[#FF4D00] group-hover:text-white transition duration-200">
+                    <span className="pl-4 md:pl-6 text-white transition duration-200">
                         <ArrowRight size={18} className="md:w-5 md:h-5" />
                     </span>
                 </button>
@@ -579,7 +397,7 @@ const About = () => {
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 md:gap-8">
                     <div className="space-y-3 md:space-y-4">
                         <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-[#FF4D00]">01</div>
-                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-light tracking-tight leading-tight">About 6CAT</h2>
+                        <h2 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight">About 6CAT</h2>
                     </div>
                     <div className="max-w-2xl space-y-3 md:space-y-4 text-white/70 text-sm md:text-base">
                         <p>
@@ -936,9 +754,9 @@ const PricingSection = () => {
                             to="/contact"
                             className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
                                 pkg.highlight
-                                    ? 'border-[#FF4D00] text-[#FF4D00] hover:bg-black hover:text-white'
+                                    ? 'border-[#FF4D00] text-[#FF4D00] hover:bg-[#1b1b1b] hover:text-white'
                                     : 'border-white/20 text-white/70 hover:bg-black hover:text-white'
-                            }`}
+                             }`}
                         >
                             Contact us
                         </Link>
@@ -953,7 +771,7 @@ const CTA = () => {
     return (
         <section id="contact" className="py-16 md:py-24 lg:py-32 px-4 md:px-6 bg-[#0a0a0a] relative overflow-hidden">
              {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#FF4D00] rounded-full filter blur-[100px] md:blur-[150px] opacity-10 pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#FF4D00] rounded-full filter blur-[100px] md:blur-[150px] opacity-15 pointer-events-none"></div>
             
             <div className="max-w-[1330px] mx-auto text-center relative z-10">
                 <h2 className="text-[clamp(2rem,8vw,5rem)] font-bold tracking-tighter mb-6 md:mb-8 text-white leading-[1.1]">
@@ -976,7 +794,7 @@ const CTA = () => {
     );
 };
 
-const Footer = () => {
+const Footer = ({ isHome }: { isHome: boolean }) => {
     const renderMarqueeText = (text: string) => (
         <span>
             {Array.from(text).map((char, index) => (
@@ -1007,9 +825,9 @@ const Footer = () => {
                 </div>
             </div>
         </div>
-        <footer className="py-8 md:py-12 px-4 md:px-6 lg:px-12 border-t border-white/5 bg-black text-xs md:text-sm">
+        <footer className="py-8 md:py-12 px-4 md:px-6 lg:px-12 text-xs md:text-sm border-t border-white/5 bg-black">
             <div className="max-w-[1330px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
-                <div className="text-neutral-500 text-center md:text-left order-2 md:order-1">
+                <div className="text-center md:text-left order-2 md:order-1 text-neutral-500">
                     &copy; 2024 6CAT AGENCY. All rights reserved.
                 </div>
                 <div className="flex gap-6 md:gap-8 order-1 md:order-2">
@@ -1017,7 +835,7 @@ const Footer = () => {
                     <a href="#" className="text-white hover:text-[#FF4D00] transition-colors py-2">Twitter</a>
                     <a href="#" className="text-white hover:text-[#FF4D00] transition-colors py-2">LinkedIn</a>
                 </div>
-                <div className="text-neutral-600 order-3 hidden md:block">
+                <div className="order-3 hidden md:block text-neutral-600">
                     Made with energy.
                 </div>
             </div>
@@ -2636,14 +2454,14 @@ const ContactPage = () => {
 
 const HomePage = () => {
   return (
-    <>
+    <main className="bg-[#050505] text-white">
       <Hero />
       <About />
       <Services />
       <SelectedWorks />
       <PricingSection />
       <CTA />
-    </>
+    </main>
   );
 };
 
@@ -2651,6 +2469,7 @@ const HomePage = () => {
 
 const AppContent = () => {
     const location = useLocation();
+    const isHome = location.pathname === '/';
     const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
@@ -2806,8 +2625,8 @@ const AppContent = () => {
     const showSectionIndicator = false;
 
     return (
-        <div className="bg-[#050505] min-h-screen text-white selection:bg-[#FF4D00] selection:text-white">
-            <Navbar />
+        <div className="bg-[#050505] text-white min-h-screen selection:bg-[#FF4D00] selection:text-white">
+            <Navbar isHome={isHome} />
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/about" element={<AboutPage />} />
@@ -2817,7 +2636,7 @@ const AppContent = () => {
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/contact" element={<ContactPage />} />
             </Routes>
-            <Footer />
+            <Footer isHome={isHome} />
             {showSectionIndicator && <SectionIndicator />}
             <CustomCursor />
         </div>
