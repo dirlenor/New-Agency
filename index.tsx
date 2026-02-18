@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowRight, ArrowUpRight, Menu, X, Globe, Zap, Box, Layers, Check, Palette, Code, Layout, Play, GitBranch, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Menu, X, Check, Palette, Code, Layout, Play, GitBranch, Sparkles } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import Lenis from 'lenis';
 
 declare global {
   interface Window {
@@ -15,6 +16,9 @@ const uxUiShowcaseImage = new URL('./assets/Fintech Platform Website Design Conc
 const webDevShowcaseImage = new URL('./assets/code aesthetic.jpeg', import.meta.url).href;
 const redesignShowcaseImage = new URL('./assets/Website Design 🌐 Cryptocurrency Landing Page - Website Design in 2024 _ Website.jpeg', import.meta.url).href;
 const systemDevShowcaseImage = new URL('./assets/Ananto Nugroho Putra.jpeg', import.meta.url).href;
+const auroraSelectedWorkImage = new URL('./work/Supercar-Experience-02-05-2026_09_02_PM.png', import.meta.url).href;
+const sm1ShowcaseImage = new URL('./assets/SM1.png', import.meta.url).href;
+const sm2ShowcaseImage = new URL('./assets/SM2.png', import.meta.url).href;
 
 // --- Helper Components ---
 
@@ -73,7 +77,7 @@ const Navbar = () => {
       { to: '/about', label: 'About Us' },
       { to: '/services', label: 'Services' },
       { to: '/pricing', label: 'Price' },
-      { to: '/contact', label: 'Contact Me' },
+      { to: '/projects', label: 'Project' },
     ],
     []
   );
@@ -116,7 +120,7 @@ const Navbar = () => {
 
         <div className="hidden md:block">
            <Link to="/contact" className="text-sm font-semibold text-white border border-white/40 px-6 py-3 rounded-full hover:border-[#FF4D00] hover:text-[#FF4D00] transition-all duration-300">
-             LET'S TALK
+             Contact Us
            </Link>
         </div>
 
@@ -609,37 +613,20 @@ const About = () => {
                     <div className="card-hover rounded-xl md:rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6 flex items-center justify-center">
                         <div className="relative w-full h-[180px] md:h-[220px] rounded-xl md:rounded-2xl overflow-hidden">
                             <img
-                                src={new URL('./assets/hero1.jpeg', import.meta.url).href}
-                                alt="Team"
+                                src={sm1ShowcaseImage}
+                                alt="Aurora showcase on laptop"
                                 className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-black/15"></div>
-                            <div className="absolute left-3 md:left-4 bottom-3 md:bottom-4 text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/70">
-                                Private & Group Sessions
-                            </div>
                         </div>
                     </div>
 
-                    <div className="card-hover rounded-xl md:rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6 space-y-4 md:space-y-5 md:col-span-2 lg:col-span-1">
-                        <div className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white">100+</div>
-                        <p className="text-xs md:text-sm text-white/70">
-                            Specialists ready to boost your growth
-                            across design, systems, and technology.
-                        </p>
-                        <div className="space-y-2 md:space-y-3">
-                            {[
-                                { label: 'Beginner', value: 0.6 },
-                                { label: 'Intermediate', value: 0.75 },
-                                { label: 'Advanced', value: 0.9 },
-                            ].map((item) => (
-                                <div key={item.label} className="flex items-center gap-3 md:gap-4 text-[10px] md:text-xs text-white/60">
-                                    <span className="w-20 md:w-24">{item.label}</span>
-                                    <div className="flex-1 h-1 rounded-full bg-white/10 overflow-hidden">
-                                        <span className="block h-full bg-white/70" style={{ width: `${item.value * 100}%` }}></span>
-                                    </div>
-                                    <span className="w-5 md:w-6 text-right">{Math.round(item.value * 100)}</span>
-                                </div>
-                            ))}
+                    <div className="card-hover rounded-xl md:rounded-2xl border border-white/10 bg-white/5 p-4 md:p-6 flex items-center justify-center md:col-span-2 lg:col-span-1">
+                        <div className="relative w-full h-[180px] md:h-[220px] rounded-xl md:rounded-2xl overflow-hidden">
+                            <img
+                                src={sm2ShowcaseImage}
+                                alt="Aurora showcase on tablet"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
                     </div>
                 </div>
@@ -748,10 +735,30 @@ const Services = () => {
     );
 };
 
-const WorkCard = ({ title, category, img, className = '' }: { title: string, category: string, img: string, className?: string }) => {
+const WorkCard = ({
+  title,
+  category,
+  img,
+  cursorCopy,
+  className = '',
+}: {
+  title: string;
+  category: string;
+  img: string;
+  cursorCopy: string;
+  className?: string;
+}) => {
     return (
-        <div className={`group card-hover relative w-full overflow-hidden rounded-xl md:rounded-2xl cursor-pointer reveal-on-scroll break-inside-avoid mb-4 md:mb-8 ${className}`}>
-            <img src={img} alt={title} className="block w-full h-auto" />
+        <div
+            data-cursor-project
+            data-cursor-copy={cursorCopy}
+            className={`group card-hover relative w-full overflow-hidden rounded-xl md:rounded-2xl cursor-pointer reveal-on-scroll break-inside-avoid mb-4 md:mb-8 ${className}`}
+        >
+            <img
+                src={img}
+                alt={title}
+                className="block w-full h-[520px] md:h-[580px] lg:h-[600px] object-cover object-top"
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/70"></div>
             <div className="absolute inset-0 z-10 p-4 md:p-6 flex flex-col justify-between">
                 <div className="flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform -translate-y-2 group-hover:translate-y-0">
@@ -774,34 +781,40 @@ const WorkCard = ({ title, category, img, className = '' }: { title: string, cat
 const SelectedWorks = () => {
     const works = [
         {
+            title: "AURORA",
+            category: "Interactive Experience",
+            img: auroraSelectedWorkImage,
+            cursorCopy: 'Immersive supercar showcase with cinematic transitions.',
+        },
+        {
             title: "Neon Horizon",
             category: "Web Design / Development",
             img: "https://i.pinimg.com/1200x/1f/ef/a8/1fefa8e20a03577e3fe84b66f84a77bf.jpg",
+            cursorCopy: 'Bold editorial web experience tuned for conversion.',
         },
         {
             title: "Cyber Punk Inc.",
             category: "Brand Identity",
             img: "https://i.pinimg.com/736x/9c/4d/28/9c4d28df158e14c642449d3442820969.jpg",
-        },
-        {
-            title: "Orbital Finance",
-            category: "Fintech / UI UX",
-            img: "https://i.pinimg.com/736x/bc/e1/c8/bce1c85e6938b3f5a387014273b353cf.jpg",
+            cursorCopy: 'Futuristic brand identity for digital-first products.',
         },
         {
             title: "Echo Systems",
             category: "Motion Design",
             img: "https://i.pinimg.com/1200x/af/e0/48/afe048b7b98f905aab940a60a25a1253.jpg",
+            cursorCopy: 'Motion-first storytelling for memorable product launches.',
         },
         {
             title: "Spectral Grid",
             category: "Editorial / Layout",
             img: "https://i.pinimg.com/1200x/41/35/2d/41352d38d7e939a2da7a3878206c4569.jpg",
+            cursorCopy: 'Modular editorial system with precise typography rhythm.',
         },
         {
             title: "Citrus Form",
             category: "Product / Visual",
             img: "https://i.pinimg.com/1200x/91/c6/71/91c6711c92bc16571b44dd48e4542330.jpg",
+            cursorCopy: 'Minimal product visuals with high-contrast campaign feel.',
         },
     ];
 
@@ -822,12 +835,13 @@ const SelectedWorks = () => {
              </div>
 
             <div className="columns-1 md:columns-2 gap-4 md:gap-8 [column-fill:balance]">
-                {works.map((work, index) => (
+                {works.map((work) => (
                     <WorkCard
                         key={work.title}
                         title={work.title}
                         category={work.category}
                         img={work.img}
+                        cursorCopy={work.cursorCopy}
                         className="inline-block align-top"
                     />
                 ))}
@@ -1108,8 +1122,11 @@ const CustomCursor = () => {
   const targetSize = useRef({ w: 18, h: 18 });
   const targetPoint = useRef({ x: 0, y: 0 });
   const targetRect = useRef<DOMRect | null>(null);
+  const hoveredProjectRef = useRef<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [enabled, setEnabled] = useState(true);
+  const [isProjectMode, setIsProjectMode] = useState(false);
+  const [projectCopy, setProjectCopy] = useState('');
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(pointer: fine)');
@@ -1141,32 +1158,96 @@ const CustomCursor = () => {
 
     const handleEnterTarget = (event: MouseEvent) => {
       const el = event.target as HTMLElement | null;
+      const projectTarget = el?.closest<HTMLElement>('[data-cursor-project]');
+      if (projectTarget) {
+        hoveredProjectRef.current = projectTarget;
+        targetRect.current = projectTarget.getBoundingClientRect();
+        const projectWidth = targetRect.current.width * 0.5;
+        const projectHeight = targetRect.current.height * 0.2;
+        targetPoint.current.x = targetRect.current.left + targetRect.current.width / 2;
+        targetPoint.current.y = targetRect.current.top + targetRect.current.height / 2;
+        targetSize.current.w = Math.max(220, Math.min(projectWidth, targetRect.current.width - 20));
+        targetSize.current.h = Math.max(96, Math.min(projectHeight, targetRect.current.height - 20));
+        setProjectCopy(projectTarget.dataset.cursorCopy ?? 'Project preview');
+        setIsProjectMode(true);
+        return;
+      }
+
       const target = el?.closest<HTMLElement>('[data-cursor-expand]');
       if (!target) return;
+      hoveredProjectRef.current = null;
       targetRect.current = target.getBoundingClientRect();
       targetPoint.current.x = targetRect.current.left + targetRect.current.width / 2;
       targetPoint.current.y = targetRect.current.top + targetRect.current.height / 2;
       targetSize.current.w = targetRect.current.width + 16;
       targetSize.current.h = targetRect.current.height + 16;
+      setIsProjectMode(false);
     };
 
     const handleLeaveTarget = (event: MouseEvent) => {
       const el = event.target as HTMLElement | null;
+      const related = event.relatedTarget as Node | null;
+      const projectTarget = el?.closest<HTMLElement>('[data-cursor-project]');
+      if (projectTarget) {
+        if (related && projectTarget.contains(related)) return;
+        hoveredProjectRef.current = null;
+        targetRect.current = null;
+        targetSize.current.w = 18;
+        targetSize.current.h = 18;
+        setIsProjectMode(false);
+        setProjectCopy('');
+        return;
+      }
+
       const target = el?.closest<HTMLElement>('[data-cursor-expand]');
       if (!target) return;
+      if (related && target.contains(related)) return;
+      hoveredProjectRef.current = null;
       targetRect.current = null;
       targetSize.current.w = 18;
       targetSize.current.h = 18;
+      setIsProjectMode(false);
     };
 
     const animate = () => {
+      if (hoveredProjectRef.current) {
+        const elementUnderPointer = document.elementFromPoint(mouse.current.x, mouse.current.y) as HTMLElement | null;
+        const stillHoveringProject = Boolean(
+          elementUnderPointer?.closest<HTMLElement>('[data-cursor-project]') === hoveredProjectRef.current
+        );
+
+        if (!stillHoveringProject) {
+          hoveredProjectRef.current = null;
+          targetRect.current = null;
+          targetSize.current.w = 18;
+          targetSize.current.h = 18;
+          setIsProjectMode(false);
+          setProjectCopy('');
+        } else {
+          targetRect.current = hoveredProjectRef.current.getBoundingClientRect();
+          if (targetRect.current) {
+            const projectWidth = targetRect.current.width * 0.5;
+            const projectHeight = targetRect.current.height * 0.2;
+            targetPoint.current.x = targetRect.current.left + targetRect.current.width / 2;
+            targetPoint.current.y = targetRect.current.top + targetRect.current.height / 2;
+            targetSize.current.w = Math.max(220, Math.min(projectWidth, targetRect.current.width - 20));
+            targetSize.current.h = Math.max(96, Math.min(projectHeight, targetRect.current.height - 20));
+          }
+        }
+      }
+
       const tx = targetRect.current ? targetPoint.current.x : mouse.current.x;
       const ty = targetRect.current ? targetPoint.current.y : mouse.current.y;
-      current.current.x += (tx - current.current.x) * 0.08;
-      current.current.y += (ty - current.current.y) * 0.08;
+      if (targetRect.current) {
+        current.current.x = tx;
+        current.current.y = ty;
+      } else {
+        current.current.x += (tx - current.current.x) * 0.06;
+        current.current.y += (ty - current.current.y) * 0.06;
+      }
 
-      size.current.w += (targetSize.current.w - size.current.w) * 0.12;
-      size.current.h += (targetSize.current.h - size.current.h) * 0.12;
+      size.current.w += (targetSize.current.w - size.current.w) * 0.06;
+      size.current.h += (targetSize.current.h - size.current.h) * 0.06;
 
       if (cursorRef.current) {
         cursorRef.current.style.transform = `translate3d(${current.current.x}px, ${current.current.y}px, 0) translate(-50%, -50%)`;
@@ -1205,12 +1286,23 @@ const CustomCursor = () => {
   return (
     <div
       ref={cursorRef}
-      className={`fixed left-0 top-0 z-[999] pointer-events-none transition-opacity duration-300 ${
+      className={`fixed left-0 top-0 z-[999] pointer-events-none will-change-transform transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       aria-hidden
     >
-      <div className="h-full w-full rounded-full border border-[#FF4D00]/60 bg-[#FF4D00]/10 shadow-[0_0_16px_rgba(255,77,0,0.35)]"></div>
+      <div
+        className={`h-full w-full overflow-hidden transition-[border-radius,background-color,box-shadow,border-color] duration-300 ${
+          isProjectMode
+            ? 'rounded-xl md:rounded-2xl border border-white/30 bg-[rgba(255,77,0,0.78)] shadow-[0_24px_52px_rgba(255,77,0,0.28)]'
+            : 'rounded-full border border-[#FF4D00]/60 bg-[#FF4D00]/10 shadow-[0_0_16px_rgba(255,77,0,0.35)]'
+        }`}
+      >
+        <div className={`h-full w-full px-6 py-3 flex flex-col justify-center transition-opacity duration-300 ${isProjectMode ? 'opacity-100' : 'opacity-0'}`}>
+          <span className="text-[11px] uppercase tracking-[0.18em] text-white/90 mb-1">Project</span>
+          <p className="text-[14px] leading-[1.35] text-white">{projectCopy}</p>
+        </div>
+      </div>
     </div>
   );
 };
@@ -2290,23 +2382,111 @@ const PricingPage = () => {
 };
 
 const ProjectsPage = () => {
+  const projects = useMemo(
+    () => [
+      {
+        title: 'Fintech Platform',
+        category: 'UI/UX Design',
+        description: 'A comprehensive financial dashboard redesign focusing on data clarity and user trust.',
+        image: uxUiShowcaseImage,
+      },
+      {
+        title: 'Code Aesthetic',
+        category: 'Web Development',
+        description: 'High-performance portfolio site for a creative developer, built with modern web standards.',
+        image: webDevShowcaseImage,
+      },
+      {
+        title: 'Crypto Landing',
+        category: 'Re-design',
+        description: 'Modernizing a cryptocurrency platform to increase conversion and user engagement.',
+        image: redesignShowcaseImage,
+      },
+      {
+        title: 'System Dashboard',
+        category: 'System Development',
+        description: 'Internal tools and data visualization for enterprise resource planning.',
+        image: systemDevShowcaseImage,
+      },
+      {
+        title: 'Aurora Experience',
+        category: 'Interactive',
+        description: 'Immersive digital experience with WebGL and React Three Fiber.',
+        image: auroraSelectedWorkImage,
+      },
+    ],
+    []
+  );
+
   return (
-    <PageShell
-      title="Projects"
-      eyebrow="Projects"
-      subtitle="Placeholder content for project highlights and case studies."
-    >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-        <div className="card-hover p-4 md:p-8 rounded-xl border border-white/10 bg-white/5">
-          <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Featured Project</h3>
-          <p className="text-sm md:text-base text-neutral-400 leading-relaxed">Short summary placeholder for a standout project.</p>
-        </div>
-        <div className="card-hover p-4 md:p-8 rounded-xl border border-white/10 bg-white/5">
-          <h3 className="text-lg md:text-xl font-semibold mb-2 md:mb-3">Project Archive</h3>
-          <p className="text-sm md:text-base text-neutral-400 leading-relaxed">Placeholder grid/list for additional work.</p>
-        </div>
+    <main className="relative bg-[#050505]">
+      <div className="relative z-10 max-w-[1330px] mx-auto px-4 md:px-6 lg:px-12 pt-24 md:pt-32 pb-16 md:pb-28 space-y-16 md:space-y-28">
+        
+        <section className="space-y-4 md:space-y-6 pb-8 md:pb-16">
+          <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/55">Selected Work</div>
+          <h1 className="text-[clamp(2rem,8vw,10rem)] font-semibold leading-[0.95] tracking-tight">
+            Our latest
+            <br />
+            projects.
+          </h1>
+          <p className="text-[clamp(1rem,2.4vw,2.25rem)] text-white/80 leading-[1.3] max-w-4xl">
+            A collection of digital experiences crafted with precision, purpose, and passion.
+          </p>
+        </section>
+
+        <section className="flex flex-col gap-0 border-t border-white/10">
+          {projects.map((project, index) => (
+            <div key={index} className={`flex flex-col md:flex-row w-full ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+              
+              <div className="w-full md:w-1/2 aspect-square relative group overflow-hidden">
+                <img 
+                  src={project.image} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500"></div>
+              </div>
+
+              <div className="w-full md:w-1/2 aspect-square bg-[#FF4D00] p-8 md:p-12 lg:p-16 flex flex-col justify-center items-start text-white relative overflow-hidden group">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+
+                 <div className="relative z-10 space-y-6">
+                   <div className="inline-block px-3 py-1 border border-white/30 rounded-full text-[10px] uppercase tracking-[0.2em] mb-2">
+                      {project.category}
+                   </div>
+                   <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
+                      {project.title}
+                   </h3>
+                   <p className="text-base md:text-lg text-white/90 leading-relaxed max-w-md">
+                      {project.description}
+                   </p>
+                   
+                   <div className="pt-4">
+                      <button className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] font-semibold group-hover:gap-5 transition-all duration-300">
+                        View Case Study <ArrowRight size={16} />
+                      </button>
+                   </div>
+                 </div>
+              </div>
+
+            </div>
+          ))}
+        </section>
+
+        <section className="text-center space-y-6 py-8 md:py-16">
+          <p className="text-[clamp(1.25rem,4vw,3rem)] font-semibold leading-[1.1] max-w-3xl mx-auto">
+            Ready to start your project?
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center justify-center px-8 py-4 border border-white/20 rounded-full text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-300"
+          >
+            Start a Conversation
+          </Link>
+        </section>
+
       </div>
-    </PageShell>
+    </main>
   );
 };
 
@@ -2471,9 +2651,60 @@ const HomePage = () => {
 
 const AppContent = () => {
     const location = useLocation();
+    const lenisRef = useRef<Lenis | null>(null);
 
     useEffect(() => {
-        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || navigator.maxTouchPoints > 0;
+        const lenis = new Lenis({
+            autoRaf: false,
+            smoothWheel: true,
+            syncTouch: false,
+            lerp: isTouchDevice ? 0.08 : 0.12,
+            wheelMultiplier: 1,
+            touchMultiplier: isTouchDevice ? 1.05 : 1.2,
+        });
+
+        lenisRef.current = lenis;
+
+        const onLenisScroll = () => {
+            if (window.ScrollTrigger) {
+                window.ScrollTrigger.update();
+            }
+        };
+
+        let rafId = 0;
+        const raf = (time: number) => {
+            lenis.raf(time);
+            rafId = window.requestAnimationFrame(raf);
+        };
+
+        lenis.on('scroll', onLenisScroll);
+        rafId = window.requestAnimationFrame(raf);
+
+        return () => {
+            window.cancelAnimationFrame(rafId);
+            lenis.off('scroll', onLenisScroll);
+            lenis.destroy();
+            lenisRef.current = null;
+        };
+    }, []);
+
+    useEffect(() => {
+        if (lenisRef.current) {
+            lenisRef.current.scrollTo(0, { immediate: true });
+        } else {
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        }
+
+        if (window.ScrollTrigger) {
+            window.requestAnimationFrame(() => {
+                window.ScrollTrigger.refresh();
+            });
+        }
     }, [location.pathname]);
 
     useEffect(() => {
