@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowRight, ArrowUpRight, Menu, X, Check, Palette, Code, Layout, Play, GitBranch, Sparkles } from 'lucide-react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
+import * as Matter from 'matter-js';
 import { BGPattern } from '@/components/ui/bg-pattern';
 
 declare global {
@@ -120,7 +121,7 @@ const Navbar = ({ isHome }: { isHome: boolean }) => {
 
         <div className="hidden md:block">
            <Link
-             to="/contact"
+             to="/#contact"
              className="text-sm font-semibold px-6 py-3 rounded-full transition-all duration-300 text-white border border-white/40 hover:border-[#FF4D00] hover:text-[#FF4D00]"
            >
              Contact Us
@@ -751,7 +752,7 @@ const PricingSection = () => {
                             ))}
                         </div>
                         <Link
-                            to="/contact"
+                            to="/#contact"
                             className={`mt-auto inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-[10px] uppercase tracking-[0.2em] transition-all duration-300 ${
                                 pkg.highlight
                                     ? 'border-[#FF4D00] text-[#FF4D00] hover:bg-[#1b1b1b] hover:text-white'
@@ -768,63 +769,294 @@ const PricingSection = () => {
 };
 
 const CTA = () => {
+    const [selectedBudget, setSelectedBudget] = useState<string | null>(null);
+
     return (
-        <section id="contact" className="py-16 md:py-24 lg:py-32 px-4 md:px-6 bg-[#0a0a0a] relative overflow-hidden">
-             {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-[#FF4D00] rounded-full filter blur-[100px] md:blur-[150px] opacity-15 pointer-events-none"></div>
-            
-            <div className="max-w-[1330px] mx-auto text-center relative z-10">
-                <h2 className="text-[clamp(2rem,8vw,5rem)] font-bold tracking-tighter mb-6 md:mb-8 text-white leading-[1.1]">
-                    Let's build something <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-neutral-500 hover:to-[#FF4D00] transition-all duration-700 cursor-default">powerful.</span>
-                </h2>
-                <p className="text-base md:text-xl text-neutral-400 mb-8 md:mb-12 max-w-2xl mx-auto px-4">
-                    Ready to elevate your digital presence? We are currently accepting new projects for Q4 2024.
-                </p>
-                <Link
-                  to="/contact"
-                  data-cursor-expand
-                  className="group relative inline-flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 border border-white/20 rounded-full text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.3em]"
-                >
-                  <span className="absolute inset-0 rounded-full bg-[#FF4D00]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
-                  <span className="relative text-white">Start a Project</span>
-                </Link>
+        <section id="contact" className="py-16 md:py-24 lg:py-32 relative overflow-hidden bg-[#0a0a0a]">
+            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(135deg,rgba(255,77,0,0.08)_0%,rgba(255,77,0,0.045)_28%,rgba(255,77,0,0.018)_50%,rgba(255,77,0,0)_76%)]"></div>
+
+            <div className="relative z-10 max-w-[1330px] mx-auto px-4 md:px-6 lg:px-12 space-y-10 md:space-y-14">
+                <div className="space-y-4 md:space-y-6 reveal-on-scroll opacity-0">
+                    <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-[#FF4D00]">05</div>
+                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight">Contact us</h2>
+                    <p className="text-base md:text-xl text-neutral-300 leading-[1.45] max-w-3xl">
+                        Ready to start your next project? Send us your brief and we will come back with a clear plan.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.2fr] gap-8 md:gap-12">
+                    <div className="space-y-6 md:space-y-8 reveal-on-scroll opacity-0">
+                        <div className="space-y-3">
+                            <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Get in touch</div>
+                            <div className="space-y-3">
+                                <a href="mailto:hello@6cat.agency" className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#FF4D00]/50 hover:bg-[#FF4D00]/5">
+                                    <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:border-[#FF4D00]/60 group-hover:text-[#FF4D00] transition-colors">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                    </div>
+                                    <div>
+                                        <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Email</div>
+                                        <div className="text-sm md:text-base text-white/85 group-hover:text-white transition-colors">hello@6cat.agency</div>
+                                    </div>
+                                </a>
+                                <a href="tel:+66000000000" className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#FF4D00]/50 hover:bg-[#FF4D00]/5">
+                                    <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:border-[#FF4D00]/60 group-hover:text-[#FF4D00] transition-colors">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                                    </div>
+                                    <div>
+                                        <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Phone</div>
+                                        <div className="text-sm md:text-base text-white/85 group-hover:text-white transition-colors">+66 000 000 000</div>
+                                    </div>
+                                </a>
+                                <div className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
+                                    <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    </div>
+                                    <div>
+                                        <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Location</div>
+                                        <div className="text-sm md:text-base text-white/85">Bangkok, Thailand</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Follow us</div>
+                            <div className="flex flex-wrap gap-3">
+                                {['Instagram', 'Twitter', 'LinkedIn'].map((social) => (
+                                    <a key={social} href="#" className="h-11 px-5 rounded-full border border-white/15 bg-white/5 flex items-center justify-center text-xs uppercase tracking-[0.15em] text-white/60 hover:border-[#FF4D00]/50 hover:text-[#FF4D00] transition-all duration-300">
+                                        {social}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-5 reveal-on-scroll opacity-0">
+                        <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Send a message</div>
+                        <form className="space-y-5" onSubmit={(event) => event.preventDefault()}>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Name</label>
+                                    <input type="text" placeholder="Your name" className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors" />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Email</label>
+                                    <input type="email" placeholder="your@email.com" className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors" />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Subject</label>
+                                <input type="text" placeholder="Project inquiry" className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors" />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Message</label>
+                                <textarea rows={5} placeholder="Tell us about your project, goals, and timeline..." className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors resize-none" />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Budget range</label>
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    {['< $5k', '$5k - $15k', '$15k - $50k', '$50k+'].map((budget) => {
+                                        const active = selectedBudget === budget;
+                                        return (
+                                            <button
+                                                key={budget}
+                                                type="button"
+                                                onClick={() => setSelectedBudget(budget)}
+                                                className={`h-11 px-4 rounded-xl border text-xs transition-all duration-300 ${
+                                                    active
+                                                        ? 'border-[#FF4D00] text-[#FF4D00] bg-[#FF4D00]/10'
+                                                        : 'border-white/10 bg-white/5 text-white/60 hover:border-[#FF4D00]/50 hover:text-[#FF4D00]'
+                                                }`}
+                                            >
+                                                {budget}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            <button type="submit" data-cursor-expand className="group relative w-full h-14 mt-2 rounded-xl bg-[#FF4D00] text-white font-semibold text-sm uppercase tracking-[0.15em] overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.4)]">
+                                <span className="relative z-10">Send Message</span>
+                                <div className="absolute inset-0 bg-gradient-to-r from-[#FF4D00] to-[#FF6B35] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            </button>
+                        </form>
+                        <p className="text-[11px] text-white/45 text-center md:text-left">We typically respond within 24 hours on business days.</p>
+                    </div>
+                </div>
             </div>
         </section>
     );
 };
 
-const Footer = ({ isHome }: { isHome: boolean }) => {
-    const renderMarqueeText = (text: string) => (
-        <span>
-            {Array.from(text).map((char, index) => (
-                <span key={`${char}-${index}`} className="marquee-letter">
-                    {char === ' ' ? '\u00A0' : char}
-                </span>
-            ))}
-        </span>
-    );
+const FooterLetterDrop = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const letterRefs = useRef<Array<HTMLSpanElement | null>>([]);
+    const startedRef = useRef(false);
+    const letters = useMemo(() => Array.from('6CATAGENCY'), []);
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        let cleanupPhysics: (() => void) | null = null;
+
+        const startPhysics = () => {
+            if (startedRef.current || !containerRef.current) return;
+            startedRef.current = true;
+
+            const { Engine, Runner, Bodies, World, Mouse, MouseConstraint, Events } = Matter;
+            const engine = Engine.create();
+            engine.gravity.y = 0.9;
+            const runner = Runner.create();
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+            const fontSize = Math.max(42, Math.min(130, Math.round(width * 0.09)));
+            const letterHeight = fontSize * 0.86;
+            const measureCanvas = document.createElement('canvas');
+            const measureCtx = measureCanvas.getContext('2d');
+            if (!measureCtx) return;
+            measureCtx.font = `700 ${fontSize}px "Poppins", "Inter", sans-serif`;
+
+            const floor = Bodies.rectangle(width / 2, height + 18, width + 240, 40, {
+                isStatic: true,
+                friction: 0.9,
+                restitution: 0.15,
+            });
+            const leftWall = Bodies.rectangle(-24, height / 2, 48, height * 2, { isStatic: true });
+            const rightWall = Bodies.rectangle(width + 24, height / 2, 48, height * 2, { isStatic: true });
+            World.add(engine.world, [floor, leftWall, rightWall]);
+
+            const bodyToVisual = new Map<number, { el: HTMLSpanElement; w: number; h: number; impactUntil: number }>();
+            const bodies: Matter.Body[] = [];
+
+            letterRefs.current.forEach((el, index) => {
+                if (!el) return;
+
+                el.style.fontSize = `${fontSize}px`;
+                el.style.lineHeight = '0.9';
+                el.style.fontWeight = '700';
+                el.style.color = 'rgba(255,255,255,0.95)';
+
+                const measuredWidth = Math.max(fontSize * 0.46, measureCtx.measureText(letters[index]).width + fontSize * 0.18);
+                const xSpread = width * 0.78;
+                const xBase = (width - xSpread) / 2;
+                const x = xBase + (xSpread * index) / Math.max(1, letters.length - 1) + (Math.random() - 0.5) * 48;
+                const y = -120 - index * (fontSize * 0.82);
+
+                const body = Bodies.rectangle(x, y, measuredWidth, letterHeight, {
+                    restitution: 0.28,
+                    friction: 0.62,
+                    frictionAir: 0.02,
+                    density: 0.0028,
+                    chamfer: { radius: 4 },
+                });
+
+                bodies.push(body);
+                bodyToVisual.set(body.id, {
+                    el,
+                    w: measuredWidth,
+                    h: letterHeight,
+                    impactUntil: 0,
+                });
+            });
+
+            World.add(engine.world, bodies);
+
+            const markImpact = (body: Matter.Body) => {
+                const visual = bodyToVisual.get(body.id);
+                if (!visual) return;
+                visual.impactUntil = performance.now() + 160;
+            };
+
+            Events.on(engine, 'collisionStart', (event) => {
+                event.pairs.forEach((pair) => {
+                    markImpact(pair.bodyA);
+                    markImpact(pair.bodyB);
+                });
+            });
+
+            const mouse = Mouse.create(container);
+            const mouseConstraint = MouseConstraint.create(engine, {
+                mouse,
+                constraint: {
+                    stiffness: 0.24,
+                    damping: 0.12,
+                    render: { visible: false },
+                },
+            });
+
+            World.add(engine.world, mouseConstraint);
+            Runner.run(runner, engine);
+
+            let rafId = 0;
+            const tick = () => {
+                const now = performance.now();
+                bodyToVisual.forEach((visual, bodyId) => {
+                    const body = bodies.find((b) => b.id === bodyId);
+                    if (!body) return;
+                    const isImpact = visual.impactUntil > now;
+                    visual.el.style.transform = `translate(${body.position.x - visual.w / 2}px, ${body.position.y - visual.h / 2}px) rotate(${body.angle}rad) scale(${isImpact ? 1.08 : 1})`;
+                    visual.el.style.textShadow = isImpact
+                        ? '0 0 20px rgba(255,255,255,0.55), 0 0 8px rgba(255,255,255,0.45)'
+                        : '0 2px 8px rgba(0,0,0,0.16)';
+                });
+                rafId = window.requestAnimationFrame(tick);
+            };
+            tick();
+
+            cleanupPhysics = () => {
+                window.cancelAnimationFrame(rafId);
+                Runner.stop(runner);
+                Matter.World.clear(engine.world, false);
+                Matter.Engine.clear(engine);
+            };
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        startPhysics();
+                    }
+                });
+            },
+            { threshold: 0.35 }
+        );
+
+        observer.observe(container);
+
+        return () => {
+            observer.disconnect();
+            if (cleanupPhysics) cleanupPhysics();
+        };
+    }, [letters]);
 
     return (
-        <>
-        <div className="h-[20vh] w-full bg-[#FF4D00] flex items-center">
-            <div className="marquee">
-                <div className="marquee-track">
-                    <div className="flex items-center gap-1 pr-2 text-white font-semibold uppercase tracking-[0.005em] text-[20vh] leading-none whitespace-nowrap h-full">
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                    </div>
-                    <div className="flex items-center gap-1 pr-2 text-white font-semibold uppercase tracking-[0.005em] text-[20vh] leading-none whitespace-nowrap h-full" aria-hidden="true">
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                        {renderMarqueeText('6CAT AGENCY IN YOUR DESIGN.')}
-                    </div>
-                </div>
-            </div>
+        <div ref={containerRef} className="relative h-[26vh] min-h-[220px] w-full overflow-hidden bg-[#050505] select-none">
+            {letters.map((char, index) => (
+                <span
+                    key={`${char}-${index}`}
+                    ref={(el) => {
+                        letterRefs.current[index] = el;
+                    }}
+                    className="absolute left-0 top-0 uppercase tracking-[0.02em] will-change-transform"
+                    style={{ transform: 'translate(-9999px, -9999px)' }}
+                >
+                    {char}
+                </span>
+            ))}
         </div>
+    );
+};
+
+const Footer = ({ isHome }: { isHome: boolean }) => {
+    return (
+        <>
+        <FooterLetterDrop />
         <footer className="py-8 md:py-12 px-4 md:px-6 lg:px-12 text-xs md:text-sm border-t border-white/5 bg-black">
             <div className="max-w-[1330px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
                 <div className="text-center md:text-left order-2 md:order-1 text-neutral-500">
@@ -1981,7 +2213,7 @@ const PricingCard = ({ pkg }: { pkg: typeof pricingPackages[0] }) => {
         </div>
       </div>
       <Link
-        to="/contact"
+        to="/#contact"
         className={`mt-6 flex items-center justify-center w-full rounded-full border px-6 py-3 text-[10px] uppercase tracking-[0.15em] transition-all duration-300 ${
           pkg.recommended
             ? 'border-[#FF4D00] text-[#FF4D00] hover:bg-black hover:text-white hover:border-black'
@@ -2173,7 +2405,7 @@ const PricingContactCta = () => {
         </p>
         <div className="flex flex-col items-center gap-3">
           <Link
-            to="/contact"
+            to="/#contact"
             className="inline-flex items-center justify-center w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 rounded-full border border-[#FF4D00] text-[#FF4D00] text-xs uppercase tracking-[0.2em] hover:bg-[#FF4D00] hover:text-white transition-all duration-300"
           >
             Talk to us
@@ -2296,157 +2528,13 @@ const ProjectsPage = () => {
             Ready to start your project?
           </p>
           <Link
-            to="/contact"
+            to="/#contact"
             className="inline-flex items-center justify-center px-8 py-4 border border-white/20 rounded-full text-xs uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-300"
           >
             Start a Conversation
           </Link>
         </section>
 
-      </div>
-    </main>
-  );
-};
-
-const ContactPage = () => {
-  return (
-    <main className="relative bg-[#050505]">
-      <div className="relative z-10 max-w-[1330px] mx-auto px-4 md:px-6 lg:px-12 pt-24 md:pt-32 pb-16 md:pb-28 space-y-16 md:space-y-28">
-        {/* Hero Section */}
-        <section className="space-y-4 md:space-y-6 pb-8 md:pb-16">
-          <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/55">Contact</div>
-          <h1 className="text-[clamp(2rem,8vw,10rem)] font-semibold leading-[0.95] tracking-tight">
-            Let's create
-            <br />
-            something great.
-          </h1>
-          <p className="text-[clamp(1rem,2.4vw,2.25rem)] text-white/80 leading-[1.3] max-w-4xl">
-            Ready to start your next project? We'd love to hear from you.
-          </p>
-        </section>
-
-        {/* Contact Content */}
-        <section className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 md:gap-16">
-          {/* Contact Info */}
-          <div className="space-y-8 md:space-y-12">
-            <div className="space-y-6">
-              <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Get in touch</div>
-              <div className="space-y-4">
-                <a href="mailto:hello@6cat.agency" className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#FF4D00]/50 hover:bg-[#FF4D00]/5">
-                  <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:border-[#FF4D00]/60 group-hover:text-[#FF4D00] transition-colors">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Email</div>
-                    <div className="text-sm md:text-base text-white/80 group-hover:text-white transition-colors">hello@6cat.agency</div>
-                  </div>
-                </a>
-                <a href="tel:+66000000000" className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 transition-all duration-300 hover:border-[#FF4D00]/50 hover:bg-[#FF4D00]/5">
-                  <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60 group-hover:border-[#FF4D00]/60 group-hover:text-[#FF4D00] transition-colors">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Phone</div>
-                    <div className="text-sm md:text-base text-white/80 group-hover:text-white transition-colors">+66 000 000 000</div>
-                  </div>
-                </a>
-                <div className="group flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5">
-                  <div className="h-10 w-10 rounded-full border border-white/20 flex items-center justify-center text-white/60">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                  </div>
-                  <div>
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-1">Location</div>
-                    <div className="text-sm md:text-base text-white/80">Bangkok, Thailand</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="space-y-4">
-              <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Follow us</div>
-              <div className="flex gap-3">
-                {['Instagram', 'Twitter', 'LinkedIn'].map((social) => (
-                  <a key={social} href="#" className="h-11 px-5 rounded-full border border-white/15 bg-white/5 flex items-center justify-center text-xs uppercase tracking-[0.15em] text-white/60 hover:border-[#FF4D00]/50 hover:text-[#FF4D00] transition-all duration-300">
-                    {social}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Form */}
-          <div className="space-y-6">
-            <div className="text-[10px] md:text-xs uppercase tracking-[0.25em] md:tracking-[0.3em] text-white/50">Send a message</div>
-            <form className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Name</label>
-                  <input 
-                    type="text" 
-                    placeholder="Your name"
-                    className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Email</label>
-                  <input 
-                    type="email" 
-                    placeholder="your@email.com"
-                    className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Subject</label>
-                <input 
-                  type="text" 
-                  placeholder="Project inquiry"
-                  className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Message</label>
-                <textarea 
-                  rows={5}
-                  placeholder="Tell us about your project, goals, and timeline..."
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FF4D00]/50 transition-colors resize-none"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Budget range</label>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {['< $5k', '$5k - $15k', '$15k - $50k', '$50k+'].map((budget) => (
-                    <button 
-                      key={budget}
-                      type="button"
-                      className="h-11 px-4 rounded-xl border border-white/10 bg-white/5 text-xs text-white/60 hover:border-[#FF4D00]/50 hover:text-[#FF4D00] transition-all duration-300 focus:border-[#FF4D00] focus:text-[#FF4D00]"
-                    >
-                      {budget}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <button 
-                type="submit"
-                className="group relative w-full h-14 mt-4 rounded-xl bg-[#FF4D00] text-white font-semibold text-sm uppercase tracking-[0.15em] overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_rgba(255,77,0,0.4)]"
-              >
-                <span className="relative z-10">Send Message</span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#FF4D00] to-[#FF6B35] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </button>
-            </form>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="text-center space-y-6 py-16 md:py-24">
-          <p className="text-[clamp(1.25rem,4vw,3rem)] font-semibold leading-[1.1] max-w-3xl mx-auto">
-            We typically respond within 24 hours.
-          </p>
-          <p className="text-sm md:text-base text-white/50 max-w-xl mx-auto">
-            Currently accepting new projects for Q1 2025.
-          </p>
-        </section>
       </div>
     </main>
   );
@@ -2634,7 +2722,7 @@ const AppContent = () => {
                 <Route path="/projects" element={<ProjectsPage />} />
                 <Route path="/quotation" element={<QuotationPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/contact" element={<Navigate to="/#contact" replace />} />
             </Routes>
             <Footer isHome={isHome} />
             {showSectionIndicator && <SectionIndicator />}
